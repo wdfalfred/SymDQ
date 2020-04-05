@@ -1,1 +1,1 @@
-from .dual_quaternion import DualQuaternion
+from .src.dual_quaternion import DualQuaternion
