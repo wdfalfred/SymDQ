@@ -110,3 +110,9 @@ class TestDualQuaternion():
         dq = dq1.combined_conjugate()
         assert dq.real == conjugate(self.q1)
         assert dq.dual == -conjugate(self.q2)
+
+    def test_should_implement_norm(self):
+        dq = DualQuaternion(Quaternion(0, 0, 0, 1), Quaternion(0, 0, -self.x, 0))
+        nm = dq.norm()
+        assert nm.real == Quaternion(1)
+        assert nm.dual == Quaternion(0)

@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from sympy import simplify, conjugate
+from sympy import simplify, conjugate, sin, cos
 from sympy.algebras.quaternion import Quaternion
 from sympy.core.expr import Expr
 
@@ -92,3 +92,14 @@ class DualQuaternion(Expr):
 
     def combined_conjugate(self):
         return DualQuaternion(conjugate(self._p), -conjugate(self._q))
+
+    def norm(self):
+        """Returns the norm of the dual quaternion."""
+        return self * self.quaternion_conjugate()
+
+    def is_unit(self):
+        pass
+
+    @classmethod
+    def from_screw(cls, l, m, theta, d):
+        pass
