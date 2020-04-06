@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from sympy import simplify
+from sympy import simplify, conjugate
 from sympy.algebras.quaternion import Quaternion
 from sympy.core.expr import Expr
 
@@ -84,3 +84,11 @@ class DualQuaternion(Expr):
 
         return DualQuaternion(dq1._p * dq2._p, dq1._p * dq2._q + dq1._q * dq2._p)
     
+    def quaternion_conjugate(self):
+        return DualQuaternion(conjugate(self._p), conjugate(self._q))
+
+    def dual_number_conjugate(self):
+        return DualQuaternion(self._p, -self._q)
+
+    def combined_conjugate(self):
+        return DualQuaternion(conjugate(self._p), -conjugate(self._q))

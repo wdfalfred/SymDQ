@@ -1,12 +1,12 @@
 import pytest
-import sympy
+from sympy import symbols, conjugate
 from sympy.algebras.quaternion import Quaternion
 from .context import DualQuaternion
 
 
 class TestDualQuaternion():
-    a, b, c, d = sympy.symbols('a b c d', real=True)
-    x, y, z, w = sympy.symbols('x y z w', real=True)
+    a, b, c, d = symbols('a b c d', real=True)
+    x, y, z, w = symbols('x y z w', real=True)
     q1 = Quaternion(a, b, c, d)
     q2 = Quaternion(x, y, z, w)
     q3 = Quaternion(z, b, a, d)
@@ -92,3 +92,21 @@ class TestDualQuaternion():
         dq = dq1 * dq2
         assert dq.real == self.q1 * self.q3
         assert dq.dual == self.q1 * self.q4 + self.q2 * self.q3
+
+    def test_should_have_quaternion_conj(self):
+        dq1 = DualQuaternion(self.q1, self.q2)
+        dq = dq1.quaternion_conjugate()
+        assert dq.real == conjugate(self.q1)
+        assert dq.dual == conjugate(self.q2)
+
+    def test_should_have_dual_conj(self):
+        dq1 = DualQuaternion(self.q1, self.q2)
+        dq = dq1.dual_number_conjugate()
+        assert dq.real == self.q1
+        assert dq.dual == -self.q2
+
+    def test_should_have_combined_conj(self):
+        dq1 = DualQuaternion(self.q1, self.q2)
+        dq = dq1.combined_conjugate()
+        assert dq.real == conjugate(self.q1)
+        assert dq.dual == -conjugate(self.q2)
