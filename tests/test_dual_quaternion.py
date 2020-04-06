@@ -47,7 +47,32 @@ class TestDualQuaternion():
         assert dq.real == self.q1 + 1
         assert dq.dual == self.q2
 
-    # can not pass since it calls __add__ of Quaternion instead of __radd__ of
+    def test_should_implement_neg(self):
+        dq1 = DualQuaternion(self.q1, self.q2)
+        dq = -dq1
+        assert dq.real == -self.q1
+        assert dq.dual == -self.q2
+
+    def test_should_handle_dq_substraction(self):
+        dq1 = DualQuaternion(self.q1, self.q2)
+        dq2 = DualQuaternion(self.q3, self.q4)
+        dq = dq1 - dq2
+        assert dq.real == self.q1 - self.q3
+        assert dq.dual == self.q2 - self.q4
+
+    def test_dq_should_sub_real(self):
+        dq1 = DualQuaternion(self.q1, self.q2)
+        dq = dq1 - 1
+        assert dq.real == self.q1 - 1
+        assert dq.dual == self.q2
+
+    def test_dq_should_sub_quat(self):
+        dq1 = DualQuaternion(self.q1, self.q2)
+        dq = dq1 - self.q3
+        assert dq.real == self.q1 - self.q3
+        assert dq.dual == self.q2
+
+    # fails since it calls __add__ of Quaternion instead of __radd__ of
     # DualQuaternion in this condition
     #def test_should_handle_quat_and_dq_radd(self):
         #dq1 = DualQuaternion(self.q1, self.q2)
