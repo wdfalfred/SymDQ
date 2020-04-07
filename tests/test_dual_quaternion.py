@@ -1,12 +1,11 @@
 import pytest
 from sympy import symbols, conjugate
+from sympy.abc import a, b, c, d, x, y, z, w
 from sympy.algebras.quaternion import Quaternion
 from .context import DualQuaternion
 
 
 class TestDualQuaternion():
-    a, b, c, d = symbols('a b c d', real=True)
-    x, y, z, w = symbols('x y z w', real=True)
     q1 = Quaternion(a, b, c, d)
     q2 = Quaternion(x, y, z, w)
     q3 = Quaternion(z, b, a, d)
@@ -19,9 +18,9 @@ class TestDualQuaternion():
         assert dq.dual == self.q2
     
     def test_should_create_from_real_number(self):
-        dq = DualQuaternion(self.a, self.b)
-        assert dq.real == Quaternion(self.a)
-        assert dq.dual == Quaternion(self.b)
+        dq = DualQuaternion(a, b)
+        assert dq.real == Quaternion(a)
+        assert dq.dual == Quaternion(b)
 
     def test_should_create_from_default(self):
         dq = DualQuaternion()
@@ -112,7 +111,7 @@ class TestDualQuaternion():
         assert dq.dual == -conjugate(self.q2)
 
     def test_should_implement_norm(self):
-        dq = DualQuaternion(Quaternion(0, 0, 0, 1), Quaternion(0, 0, -self.x, 0))
+        dq = DualQuaternion(Quaternion(0, 0, 0, 1), Quaternion(0, 0, -x, 0))
         nm = dq.norm()
         assert nm.real == Quaternion(1)
         assert nm.dual == Quaternion(0)
