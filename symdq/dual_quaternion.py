@@ -109,12 +109,6 @@ class DualQuaternion(Expr):
     def rotation_matrix(self):
         return self._p.to_rotation_matrix()
 
-    def translation(self):
-        pass
-
-    def to_homogeneous_matrix(self):
-        pass
-
     @staticmethod
     def transform_point(pin, t):
         """Returns the coordinates of the point pin(a 3 tuple) after transformation.
