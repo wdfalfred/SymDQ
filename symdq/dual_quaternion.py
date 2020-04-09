@@ -1,6 +1,10 @@
+# Reference : 
+# DOI: 10.1177/02783649922066213
 from __future__ import print_function
 
-from sympy import simplify, conjugate, sin, cos
+from sympy import S
+from sympy import simplify, trigsimp
+from sympy import conjugate, sin, cos, sqrt
 from sympy.algebras.quaternion import Quaternion
 from sympy.core.expr import Expr
 
@@ -15,8 +19,7 @@ class DualQuaternion(Expr):
             p = Quaternion(p)
         if not isinstance(q, Quaternion):
             q = Quaternion(q)
-        p = simplify(p)
-        q = simplify(q)
+
         obj = Expr.__new__(cls, p, q)
         obj._p = p
         obj._q = q
@@ -98,8 +101,63 @@ class DualQuaternion(Expr):
         return self * self.quaternion_conjugate()
 
     def is_unit(self):
+        """Returns True if is a unit dual quaternion and False otherwise."""
+        p = self._p
+        q = self._q
+        return trigsimp(p.a**2 + p.b**2 + p.c**2 + p.d**2) == 1 and trigsimp(p.a*q.a + p.b*q.b + p.c*q.c + p.d*q.d) == 0
+
+    def rotation_matrix(self):
+        return self._p.to_rotation_matrix()
+
+    def translation(self):
         pass
+
+    def to_homogeneous_matrix(self):
+        pass
+
+    @staticmethod
+    def transform_point(pin, t):
+        """Returns the coordinates of the point pin(a 3 tuple) after transformation.
+        Parameters
+        ==========
+        pin : tuple
+            A 3-element tuple of coordinates of a point which needs to be
+            transformed.
+        r : DualQuaternion
+            Screw axis and dual angle of rotation.
+
+        Returns
+        =======
+        tuple
+            The coordinates of the point after transformation.
+        """
+        pout =  (t * DualQuaternion(1, Quaternion(0, *pin)) * t.combined_conjugate()).dual
+        return (pout.b, pout.c, pout.d)
 
     @classmethod
     def from_screw(cls, l, m, theta, d):
-        pass
+        """Returns the unit dual quaternion corresponding to a screw.
+
+        Parameters
+        ==========
+        l : tuple
+            unit vector parallel to the screw axis
+        m : tuple
+            moment of l 
+        theta : number
+        d : number
+
+        Returns
+        =======
+        DualQuaternion
+
+        """
+        (x, y, z) = l
+        (a, b, c) = m
+        if trigsimp(x**2 + y**2 + z**2) != 1 or trigsimp(x*a + y*b + z*c) != 0:
+            raise ValueError("Expected l to be a unit vector and m perpendicular to l!")
+
+        q_r = Quaternion(cos(theta * S.Half), *(sin(theta * S.Half) * i for i in l))
+        q_d = Quaternion(-d * S.Half * sin(theta * S.Half), 
+        *(d * S.Half * cos(theta * S.Half) * i + sin(theta * S.Half) * j for i, j in zip(l, m)))
+        return DualQuaternion(q_r, q_d)

@@ -1,6 +1,8 @@
 import pytest
+from sympy import S
 from sympy import symbols, conjugate
-from sympy.abc import a, b, c, d, x, y, z, w
+from sympy import sin, cos
+from sympy.abc import a, b, c, d, x, y, z, w, theta
 from sympy.algebras.quaternion import Quaternion
 from .context import DualQuaternion
 
@@ -115,3 +117,22 @@ class TestDualQuaternion():
         nm = dq.norm()
         assert nm.real == Quaternion(1)
         assert nm.dual == Quaternion(0)
+
+    def test_should_construct_from_screw(self):
+        l = (0, 0, 1)
+        m = (0, -x, 0)
+        dq = DualQuaternion.from_screw(l, m, theta, 0)
+        assert dq.real == Quaternion(cos(theta * S.Half), 0, 0, sin(theta * S.Half))
+        assert dq.dual == Quaternion(0, 0, -x * sin(theta * S.Half), 0)
+
+    def test_from_screw_should_raise_exception_if_l_not_unit(self):
+        l = (0, 0, 2)
+        m = (0, -x, 0)
+        with pytest.raises(ValueError):
+            DualQuaternion.from_screw(l, m, theta, 0)
+
+    def test_from_screw_should_raise_exception_if_l_m_not_orthogonal(self):
+        l = (0, 0, 1)
+        m = (0, 0, x)
+        with pytest.raises(ValueError):
+            DualQuaternion.from_screw(l, m, theta, 0)
