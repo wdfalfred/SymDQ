@@ -33,6 +33,12 @@ class DualQuaternion(Expr):
     def dual(self):
         return self._q
 
+    def _latex(self, printer=None):
+        return r'%s + \epsilon \left( %s \right)' % (printer.doprint(self._p), printer.doprint(self._q))
+
+    def _sympystr(self, printer=None):
+        return r'%s + e(%s)' % (printer.doprint(self._p), printer.doprint(self._q))
+
     def __add__(self, other):
         return self.add(other)
 
