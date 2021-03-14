@@ -1,3 +1,5 @@
+# https://tel.archives-ouvertes.fr/tel-00641678/document
+
 import pytest
 from sympy import *
 from sympy import symbols, conjugate
